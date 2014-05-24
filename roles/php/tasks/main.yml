@@ -1,0 +1,12 @@
+---
+- name: install php with mysql
+  apt: name={{ item }} state=present
+  with_items:
+    - php5-fpm
+    - php5-cli
+    - php5-mysql
+
+- name: install php extensions
+  apt: name={{ item }} state=present
+  with_items:
+    - php5-json

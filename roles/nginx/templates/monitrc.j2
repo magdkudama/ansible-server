@@ -1,0 +1,65 @@
+  set daemon {{ daemon_time|default(120) }}
+  
+  set logfile {{ logfile|default('/var/log/monit.log') }}
+
+  set idfile {{ idfile|default('/var/lib/monit/id') }}
+
+  set statefile {{ statefile|default('/var/lib/monit/state') }}
+
+  set mailserver smtp.gmail.com
+    port 587
+    username "{{ alerts_email }}"
+    password "{{ alerts_password }}"
+    using tlsv1
+    with timeout 30 seconds
+
+  set eventqueue
+    basedir {{ eventqueue_basedir|default('/var/lib/monit/events') }}
+    slots {{ eventqueue_slots|default(100) }}
+
+  set mail-format {
+    from: alertas@$HOST
+    subject: ALERTA -- $EVENT $SERVICE
+    message: $EVENT => servicio $SERVICE
+                 Fecha:         $DATE
+                 Host:          $HOST
+                 Descripción:   $DESCRIPTION
+  }
+
+  set alert {{ alerts_email }}
+
+  set httpd port 2812
+    allow localhost
+
+  check system {{ inventory_hostname }}
+    if loadavg (1min) > 40 then exec "/usr/bin/python /opt/scripts/alert.py"
+    if loadavg (5min) > 35 then exec "/usr/bin/python /opt/scripts/alert.py"
+    if memory usage > 50% then exec "/usr/bin/python /opt/scripts/alert.py"
+    if swap usage > 25% then exec "/usr/bin/python /opt/scripts/alert.py"
+    if cpu usage (user) > 40% then exec "/usr/bin/python /opt/scripts/alert.py"
+    if cpu usage (system) > 40% then exec "/usr/bin/python /opt/scripts/alert.py"
+    if cpu usage (wait) > 30% then exec "/usr/bin/python /opt/scripts/alert.py"
+
+  check process apache with pidfile /var/run/apache2.pid
+    if totalcpu > 30% for 3 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if totalmem > 200.0 MB for 5 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if children > 150 then exec "/usr/bin/python /opt/scripts/alert.py"
+    if loadavg(5min) > 40 for 8 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+
+  check process mysql with pidfile /var/run/mysqld/mysqld.pid
+    if totalcpu > 30% for 3 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if totalmem > 300.0 MB for 5 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if loadavg(5min) > 40 for 8 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+
+  check process postgresql with pidfile /var/run/postgresql/9.3-main.pid
+    if totalcpu > 30% for 3 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if totalmem > 300.0 MB for 5 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if loadavg(5min) > 40 for 8 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+
+  check process tomcat with pidfile /var/run/tomcat6.pid
+    if totalcpu > 40% for 3 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if totalmem > 600.0 MB for 5 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+    if loadavg(5min) > 50 for 8 cycles then exec "/usr/bin/python /opt/scripts/alert.py"
+
+   include /etc/monit/conf.d/*
+

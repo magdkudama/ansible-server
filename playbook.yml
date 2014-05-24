@@ -1,0 +1,13 @@
+---
+- hosts: webservers
+  sudo: false
+  user: root
+  roles:
+    - keys
+    - common
+    - pip
+    - mysql
+    - php
+    - composer
+    - nginx
+

@@ -1,0 +1,12 @@
+---
+- name: install setuptools
+  apt: name=python-setuptools state=present
+  tags: pip
+
+- name: install pip
+  easy_install: name=pip
+  tags: pip
+
+- name: install hipchat python client
+  pip: name=python-simple-hipchat
+  tags: pip

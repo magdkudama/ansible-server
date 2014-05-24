@@ -1,0 +1,9 @@
+---
+- name: install composer globally
+  shell: curl -sS https://getcomposer.org/installer | php
+
+- name: move composer to bin directory
+  shell: mv composer.phar /usr/local/bin/composer
+
+- name: make composer executable
+  shell: chmod a+x /usr/local/bin/composer

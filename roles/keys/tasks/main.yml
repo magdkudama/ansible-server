@@ -1,0 +1,5 @@
+---
+- name: set authorized keys for root user
+  authorized_key: user=root key="{{ item }}"
+  with_file:
+    - public-keys/default
