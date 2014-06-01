@@ -2,3 +2,14 @@
 - name: install nginx
   apt: name=nginx state=present
   notify: start nginx
+
+- name: install magdkudama.com site
+  template: src=magdkudama.com.j2 dest=/etc/nginx/sites-available/magdkudama.com
+  tags:
+    - sites
+
+- name: enable magdkudama.com site
+  file: src=/etc/nginx/sites-available/magdkudama.com dest=/etc/nginx/sites-enabled/magdkudama.com state=link
+  notify: reload nginx
+  tags:
+    - sites

@@ -1,0 +1,9 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server ipv6only=on;
+
+  root /var/www/magdkudama.com;
+  index index.html;
+
+  server_name magdkudama.com www.magdkudama.com;
+}

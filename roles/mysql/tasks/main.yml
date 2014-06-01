@@ -5,5 +5,8 @@
 - name: install python-mysqldb
   apt: name=python-mysqldb state=present
 
+- name: create my.cnf file
+  template: src=my-cnf.j2 dest=~/.my.cnf
+
 - name: create mysql user
   mysql_user: name={{ mysql_user }} password={{ mysql_password }} priv=*.*:ALL state=present
